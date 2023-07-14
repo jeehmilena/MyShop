@@ -1,13 +1,13 @@
 import 'dart:math';
 
 import 'package:flutter/cupertino.dart';
-import 'package:my_shop/models/cart_item.dart';
-import 'package:my_shop/models/product.dart';
+import 'package:my_shop/models/cart_item_model.dart';
+import 'package:my_shop/models/product_model.dart';
 
-class Cart with ChangeNotifier {
-  Map<String, CartItem> _items = {};
+class CartModel with ChangeNotifier {
+  Map<String, CartItemModel> _items = {};
 
-  Map<String, CartItem> get items {
+  Map<String, CartItemModel> get items {
     return {..._items};
   }
 
@@ -23,11 +23,11 @@ class Cart with ChangeNotifier {
     return total;
   }
 
-  void addItem(Product product) {
+  void addItem(ProductModel product) {
     if (_items.containsKey(product.id)) {
       _items.update(
         product.id,
-        (existingItem) => CartItem(
+        (existingItem) => CartItemModel(
           id: existingItem.id,
           productId: existingItem.productId,
           title: existingItem.title,
@@ -38,7 +38,7 @@ class Cart with ChangeNotifier {
     } else {
       _items.putIfAbsent(
         product.id,
-        () => CartItem(
+        () => CartItemModel(
           id: Random().nextDouble().toString(),
           productId: product.id,
           title: product.title,
@@ -51,7 +51,7 @@ class Cart with ChangeNotifier {
   }
 
   void removeItem(String productId) {
-    items.remove(productId);
+    _items.remove(productId);
     notifyListeners();
   }
 

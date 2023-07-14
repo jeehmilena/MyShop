@@ -1,24 +1,24 @@
 import 'package:flutter/material.dart';
-import 'package:my_shop/models/cart.dart';
+import 'package:my_shop/models/cart_model.dart';
 import 'package:my_shop/utils/app_routes.dart';
 import 'package:provider/provider.dart';
 
-import '../models/product.dart';
+import '../models/product_model.dart';
 
 class ProductItem extends StatelessWidget {
   const ProductItem({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    final product = Provider.of<Product>(context, listen: false);
-    final cart = Provider.of<Cart>(context, listen: false);
+    final product = Provider.of<ProductModel>(context, listen: false);
+    final cart = Provider.of<CartModel>(context, listen: false);
 
     return ClipRRect(
       borderRadius: BorderRadius.circular(10),
       child: GridTile(
         footer: GridTileBar(
           backgroundColor: Colors.black87,
-          leading: Consumer<Product>(
+          leading: Consumer<ProductModel>(
             builder: (ctx, product, _) => IconButton(
               onPressed: () {
                 product.toggleFavorite();

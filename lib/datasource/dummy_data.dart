@@ -1,14 +1,14 @@
-import '../models/product.dart';
+import '../models/product_model.dart';
 
 final dummyProducts = [
-  Product(
+  ProductModel(
     id: 'p1',
     title: 'Red Shirt',
     description: 'A red shirt - it is pretty red!',
     price: 29.99,
     imageUrl: 'https://cdn.pixabay.com/photo/2016/10/02/22/17/red-t-shirt-1710578_1280.jpg',
   ),
-  Product(
+  ProductModel(
     id: 'p2',
     title: 'Trousers',
     description: 'A nice pair of trousers.',
@@ -16,14 +16,14 @@ final dummyProducts = [
     imageUrl:
         'https://upload.wikimedia.org/wikipedia/commons/thumb/e/e8/Trousers%2C_dress_%28AM_1960.022-8%29.jpg/512px-Trousers%2C_dress_%28AM_1960.022-8%29.jpg',
   ),
-  Product(
+  ProductModel(
     id: 'p3',
     title: 'Yellow Scarf',
     description: 'Warm and cozy - exactly what you need for the winter.',
     price: 19.99,
     imageUrl: 'https://live.staticflickr.com/4043/4438260868_cc79b3369d_z.jpg',
   ),
-  Product(
+  ProductModel(
     id: 'p4',
     title: 'Facinelli Jacket',
     description: 'Fashion look guaranteed with the Facinelli Jacket',
@@ -31,7 +31,7 @@ final dummyProducts = [
     imageUrl:
         'https://static.zattini.com.br/produtos/jaqueta-facinelli-pu-detalhe-matelasse-feminina/06/H37-2432-006/H37-2432-006_zoom1.jpg?ts=1681303633&ims=544x',
   ),
-  Product(
+  ProductModel(
     id: 'p5',
     title: 'Women`s Bag On The Side',
     description:
@@ -40,7 +40,7 @@ final dummyProducts = [
     imageUrl:
         'https://static.zattini.com.br/produtos/bolsa-feminina-de-lado-clutch-festa-ombro-star-shop/06/JM8-0008-006/JM8-0008-006_zoom1.jpg?ts=1666255147&ims=544x',
   ),
-  Product(
+  ProductModel(
     id: 'p6',
     title: 'My Way Giorgio Armani',
     description:
@@ -49,7 +49,7 @@ final dummyProducts = [
     imageUrl:
         'https://static.zattini.com.br/produtos/my-way-giorgio-armani-perfume-feminino-edp-30ml/60/L92-0275-460/L92-0275-460_zoom1.jpg?ts=1679937120&ims=544x',
   ),
-  Product(
+  ProductModel(
     id: 'p7',
     title: 'Social Belt',
     description:
@@ -58,7 +58,7 @@ final dummyProducts = [
     imageUrl:
         'https://static.zattini.com.br/produtos/cinto-social-dupla-face-com-fivela-yes-basic/06/0EX-0002-006/0EX-0002-006_zoom1.jpg?ts=1601554065&ims=544x',
   ),
-  Product(
+  ProductModel(
     id: 'p8',
     title: 'Men`s Perfume One Million Paco Rabanne',
     description: '1 Million is Paco Rabanne`s iconic masculine perfumer.',
@@ -66,7 +66,7 @@ final dummyProducts = [
     imageUrl:
         'https://static.zattini.com.br/produtos/perfume-masculino-one-million-paco-rabanne-eau-de-toilette-200ml/60/M42-0192-460/M42-0192-460_zoom1.jpg?ts=1593687019&ims=544x',
   ),
-  Product(
+  ProductModel(
     id: 'p9',
     title: 'Men`s White Shoes Casual Sneakers Polo Vili',
     description:
@@ -75,7 +75,7 @@ final dummyProducts = [
     imageUrl:
         'https://static.zattini.com.br/produtos/sapatenis-masculino-branco-tenis-casual-polo-vili-para-dia-a-dia/03/9N2-0010-003/9N2-0010-003_zoom1.jpg?ts=1678804315&ims=544x',
   ),
-  Product(
+  ProductModel(
     id: 'p10',
     title: 'Adidas x Disney Mickey Mouse Kids Backpack',
     description:
@@ -84,14 +84,14 @@ final dummyProducts = [
     imageUrl:
         'https://static.zattini.com.br/produtos/mochila-infantil-adidas-x-disney-mickey-mouse/79/FB8-3768-979/FB8-3768-979_zoom1.jpg?ts=1669730302&ims=544x',
   ),
-  Product(
+  ProductModel(
     id: 'p11',
     title: 'M·A·C Retro Matte Lipstick Ruby Woo',
     description: 'M·A·C Retro Matte Lipstick Ruby Woo.',
     price: 102.90,
     imageUrl: 'https://m.media-amazon.com/images/I/61Ivfv8W14L.__AC_SX300_SY300_QL70_ML2_.jpg',
   ),
-  Product(
+  ProductModel(
     id: 'p12',
     title: 'MEN`S SLIM WATCH SILVER WITH BLUE BACKGROUND TECHNOS',
     description: 'This watch is ideal for men who know the value of a minimalist look.',
