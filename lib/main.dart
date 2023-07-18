@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:my_shop/models/cart_model.dart';
 import 'package:my_shop/models/order_list_model.dart';
 import 'package:my_shop/presenter/cart_overview.dart';
+import 'package:my_shop/presenter/form_product.dart';
 import 'package:my_shop/presenter/manage_products.dart';
 import 'package:my_shop/presenter/orders_overview.dart';
 import 'package:my_shop/presenter/product_detail.dart';
@@ -39,6 +40,7 @@ class MyApp extends StatelessWidget {
           AppRoutes.cart: (ctx) => const CartOverview(),
           AppRoutes.orders: (ctx) => const OrdersOverview(),
           AppRoutes.manageProducts: (ctx) => const ManageProducts(),
+          AppRoutes.formProducts: (ctx) => const FormProduct(),
         },
         debugShowCheckedModeBanner: false,
       ),
