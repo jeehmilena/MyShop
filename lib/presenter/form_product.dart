@@ -17,6 +17,7 @@ class _FormProductState extends State<FormProduct> {
   final imageUrlController = TextEditingController();
   final formKey = GlobalKey<FormState>();
   final formData = <String, Object>{};
+  bool isLoading = false;
 
   @override
   void initState() {
@@ -57,7 +58,7 @@ class _FormProductState extends State<FormProduct> {
     setState(() {});
   }
 
-  void submitForm() {
+  Future<void> submitForm() async {
     final isFormValidate = formKey.currentState?.validate() ?? false;
 
     if (!isFormValidate) {
@@ -65,11 +66,39 @@ class _FormProductState extends State<FormProduct> {
     }
 
     formKey.currentState?.save();
-    Provider.of<ProductListModel>(
-      context,
-      listen: false,
-    ).saveProduct(formData);
-    Navigator.of(context).pop();
+
+    setState(() => isLoading = true);
+
+    try {
+      await Provider.of<ProductListModel>(
+        context,
+        listen: false,
+      ).saveProduct(formData);
+
+      Navigator.of(context).pop();
+    } catch (error) {
+      await showDialog(
+        context: context,
+        builder: (ctx) => AlertDialog(
+          title: Text(
+            'Ops!',
+            style: Theme.of(context).textTheme.titleMedium,
+          ),
+          content: Text(
+            'An error occurred while saving the product!',
+            style: Theme.of(context).textTheme.bodySmall,
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: const Text('Ok'),
+            )
+          ],
+        ),
+      );
+    } finally {
+      setState(() => isLoading = false);
+    }
   }
 
   bool isValidUrl(String url) {
@@ -90,121 +119,131 @@ class _FormProductState extends State<FormProduct> {
           ),
         ],
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(18),
-        child: Form(
-          key: formKey,
-          child: ListView(
-            children: [
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: TextFormField(
-                  initialValue: formData['name'].toString(),
-                  decoration: const InputDecoration(
-                    labelText: 'Name',
-                  ),
-                  textInputAction: TextInputAction.next,
-                  onFieldSubmitted: (_) {
-                    FocusScope.of(context).requestFocus(descriptionFocus);
-                  },
-                  onSaved: (name) => formData['name'] = name ?? '',
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: TextFormField(
-                  initialValue: formData['description'].toString(),
-                  decoration: const InputDecoration(
-                    labelText: 'Description',
-                  ),
-                  keyboardType: TextInputType.multiline,
-                  focusNode: descriptionFocus,
-                  maxLines: 3,
-                  onSaved: (description) => formData['description'] = description ?? '',
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: TextFormField(
-                  initialValue: formData['price'].toString(),
-                  decoration: const InputDecoration(
-                    labelText: 'Price',
-                  ),
-                  textInputAction: TextInputAction.next,
-                  focusNode: priceFocus,
-                  keyboardType: const TextInputType.numberWithOptions(signed: true, decimal: true),
-                  onSaved: (price) => formData['price'] = double.parse(price ?? '0'),
-                  validator: (price) {
-                    final priceString = price ?? '';
-                    final priceFinal = double.tryParse(priceString) ?? -1;
-
-                    if (priceFinal <= 0) {
-                      return 'Provide a valid price!';
-                    }
-
-                    return null;
-                  },
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.end,
+      body: isLoading
+          ? const Center(
+              child: CircularProgressIndicator(),
+            )
+          : Padding(
+              padding: const EdgeInsets.all(18),
+              child: Form(
+                key: formKey,
+                child: ListView(
                   children: [
-                    Expanded(
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
                       child: TextFormField(
+                        initialValue: formData['name'].toString(),
                         decoration: const InputDecoration(
-                          labelText: 'Image URL',
+                          labelText: 'Name',
                         ),
-                        focusNode: imageUrlFocus,
-                        keyboardType: TextInputType.url,
-                        textInputAction: TextInputAction.done,
-                        controller: imageUrlController,
+                        textInputAction: TextInputAction.next,
                         onFieldSubmitted: (_) {
-                          submitForm();
+                          FocusScope.of(context).requestFocus(descriptionFocus);
                         },
-                        onSaved: (imageUrl) => formData['imageUrl'] = imageUrl ?? '',
-                        validator: (url) {
-                          final imageUrl = url ?? '';
-                          if (!isValidUrl(imageUrl)) {
-                            return 'Provide a valid URL!';
+                        onSaved: (name) => formData['name'] = name ?? '',
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: TextFormField(
+                        initialValue: formData['description'].toString(),
+                        decoration: const InputDecoration(
+                          labelText: 'Description',
+                        ),
+                        keyboardType: TextInputType.multiline,
+                        focusNode: descriptionFocus,
+                        maxLines: 3,
+                        onSaved: (description) =>
+                            formData['description'] = description ?? '',
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: TextFormField(
+                        initialValue: formData['price'].toString(),
+                        decoration: const InputDecoration(
+                          labelText: 'Price',
+                        ),
+                        textInputAction: TextInputAction.next,
+                        focusNode: priceFocus,
+                        keyboardType: const TextInputType.numberWithOptions(
+                            signed: true, decimal: true),
+                        onSaved: (price) =>
+                            formData['price'] = double.parse(price ?? '0'),
+                        validator: (price) {
+                          final priceString = price ?? '';
+                          final priceFinal = double.tryParse(priceString) ?? -1;
+
+                          if (priceFinal <= 0) {
+                            return 'Provide a valid price!';
                           }
+
                           return null;
                         },
                       ),
                     ),
-                    Container(
-                      height: 100,
-                      width: 100,
-                      margin: const EdgeInsets.only(top: 20, left: 16),
-                      decoration: BoxDecoration(
-                        border: Border.all(color: Colors.grey, width: 1),
-                        borderRadius: const BorderRadius.all(Radius.circular(10)),
-                      ),
-                      alignment: Alignment.center,
-                      child: Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: imageUrlController.text.isEmpty
-                            ? Text(
-                                'Inform the URL image',
-                                style: Theme.of(context).textTheme.bodySmall,
-                                textAlign: TextAlign.center,
-                              )
-                            : FittedBox(
-                                child: Image.network(
-                                  imageUrlController.text,
-                                  fit: BoxFit.cover,
-                                ),
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        children: [
+                          Expanded(
+                            child: TextFormField(
+                              decoration: const InputDecoration(
+                                labelText: 'Image URL',
                               ),
+                              focusNode: imageUrlFocus,
+                              keyboardType: TextInputType.url,
+                              textInputAction: TextInputAction.done,
+                              controller: imageUrlController,
+                              onFieldSubmitted: (_) {
+                                submitForm();
+                              },
+                              onSaved: (imageUrl) =>
+                                  formData['imageUrl'] = imageUrl ?? '',
+                              validator: (url) {
+                                final imageUrl = url ?? '';
+                                if (!isValidUrl(imageUrl)) {
+                                  return 'Provide a valid URL!';
+                                }
+                                return null;
+                              },
+                            ),
+                          ),
+                          Container(
+                            height: 100,
+                            width: 100,
+                            margin: const EdgeInsets.only(top: 20, left: 16),
+                            decoration: BoxDecoration(
+                              border: Border.all(color: Colors.grey, width: 1),
+                              borderRadius:
+                                  const BorderRadius.all(Radius.circular(10)),
+                            ),
+                            alignment: Alignment.center,
+                            child: Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: imageUrlController.text.isEmpty
+                                  ? Text(
+                                      'Inform the URL image',
+                                      style:
+                                          Theme.of(context).textTheme.bodySmall,
+                                      textAlign: TextAlign.center,
+                                    )
+                                  : FittedBox(
+                                      child: Image.network(
+                                        imageUrlController.text,
+                                        fit: BoxFit.cover,
+                                      ),
+                                    ),
+                            ),
+                          )
+                        ],
                       ),
-                    )
+                    ),
                   ],
                 ),
               ),
-            ],
-          ),
-        ),
-      ),
+            ),
       floatingActionButton: FloatingActionButton(
         onPressed: submitForm,
         backgroundColor: Colors.pinkAccent,
