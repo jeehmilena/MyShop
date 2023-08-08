@@ -67,13 +67,15 @@ class _AuthFormState extends State<AuthForm> {
                   ),
                   keyboardType: TextInputType.text,
                   obscureText: true,
-                  validator: (_password) {
-                    final password = _password ?? '';
-                    if (password != _passwordController.text) {
-                      return 'The passwords entered are different.';
-                    }
-                    return null;
-                  },
+                  validator: _authMode == AuthMode.Login
+                      ? null
+                      : (_password) {
+                          final password = _password ?? '';
+                          if (password != _passwordController.text) {
+                            return 'The passwords entered are different.';
+                          }
+                          return null;
+                        },
                 ),
               const SizedBox(height: 20),
               ElevatedButton(
