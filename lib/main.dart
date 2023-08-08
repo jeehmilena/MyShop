@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:my_shop/models/cart_model.dart';
 import 'package:my_shop/models/order_list_model.dart';
+import 'package:my_shop/presenter/auth_page.dart';
 import 'package:my_shop/presenter/cart_overview.dart';
 import 'package:my_shop/presenter/form_product.dart';
 import 'package:my_shop/presenter/manage_products.dart';
@@ -35,6 +36,7 @@ class MyApp extends StatelessWidget {
                 ),
             fontFamily: 'Lato'),
         routes: {
+          AppRoutes.auth: (ctx) => const AuthPage(),
           AppRoutes.home: (ctx) => const ProductsOverview(),
           AppRoutes.productDetail: (ctx) => const ProductDetail(),
           AppRoutes.cart: (ctx) => const CartOverview(),
