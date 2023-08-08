@@ -10,22 +10,34 @@ class AuthForm extends StatefulWidget {
 }
 
 class _AuthFormState extends State<AuthForm> {
-  final AuthMode _authMode = AuthMode.Login;
+  AuthMode _authMode = AuthMode.Login;
 
   @override
   Widget build(BuildContext context) {
-    final _passwordController = TextEditingController();
+    final passwordController = TextEditingController();
     final deviceSize = MediaQuery.of(context).size;
-    Map<String, String> _authData = {'email': '', 'password': ''};
+    final Map<String, String> authData = {'email': '', 'password': ''};
 
-    void _submit() {}
+    bool isLogin() => _authMode == AuthMode.Login;
+    bool isSignup() => _authMode == AuthMode.Signup;
+
+    void submit() {}
+    void switchAuthMode() {
+      setState(() {
+        if (isLogin()) {
+          _authMode = AuthMode.Signup;
+        } else {
+          _authMode = AuthMode.Login;
+        }
+      });
+    }
 
     return Card(
       elevation: 8,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
       child: Container(
         padding: const EdgeInsets.all(16),
-        height: 320,
+        height: isLogin() ? 320 : 400,
         width: deviceSize.width * 0.75,
         child: Form(
           child: Column(
@@ -35,7 +47,7 @@ class _AuthFormState extends State<AuthForm> {
                   labelText: 'Email',
                 ),
                 keyboardType: TextInputType.emailAddress,
-                onSaved: (email) => _authData['email'] = email ?? '',
+                onSaved: (email) => authData['email'] = email ?? '',
                 validator: (_email) {
                   final email = _email ?? '';
                   if (email.trim().isEmpty || !email.contains('@')) {
@@ -50,8 +62,8 @@ class _AuthFormState extends State<AuthForm> {
                 ),
                 keyboardType: TextInputType.text,
                 obscureText: true,
-                controller: _passwordController,
-                onSaved: (password) => _authData['password'] = password ?? '',
+                controller: passwordController,
+                onSaved: (password) => authData['password'] = password ?? '',
                 validator: (_password) {
                   final password = _password ?? '';
                   if (password.isEmpty || password.length < 5) {
@@ -60,18 +72,18 @@ class _AuthFormState extends State<AuthForm> {
                   return null;
                 },
               ),
-              if (_authMode == AuthMode.Signup)
+              if (isSignup())
                 TextFormField(
                   decoration: const InputDecoration(
                     labelText: 'Confirm Password',
                   ),
                   keyboardType: TextInputType.text,
                   obscureText: true,
-                  validator: _authMode == AuthMode.Login
+                  validator: isLogin()
                       ? null
                       : (_password) {
                           final password = _password ?? '';
-                          if (password != _passwordController.text) {
+                          if (password != passwordController.text) {
                             return 'The passwords entered are different.';
                           }
                           return null;
@@ -79,7 +91,7 @@ class _AuthFormState extends State<AuthForm> {
                 ),
               const SizedBox(height: 20),
               ElevatedButton(
-                onPressed: _submit,
+                onPressed: submit,
                 style: ElevatedButton.styleFrom(
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(30),
@@ -88,7 +100,20 @@ class _AuthFormState extends State<AuthForm> {
                       horizontal: 50,
                       vertical: 10,
                     )),
-                child: Text(_authMode == AuthMode.Login ? 'ENTER' : 'REGISTER'),
+                child: Text(isLogin() ? 'ENTER' : 'REGISTER'),
+              ),
+              const Spacer(),
+              TextButton(
+                onPressed: switchAuthMode,
+                child: Text(
+                  isLogin()
+                      ? 'Do you want to register?'
+                      : 'Already have an account?',
+                  style: Theme.of(context)
+                      .textTheme
+                      .titleMedium
+                      ?.copyWith(color: Colors.pinkAccent),
+                ),
               ),
             ],
           ),

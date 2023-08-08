@@ -24,22 +24,22 @@ class AuthPage extends StatelessWidget {
             ),
           ),
         ),
-        Container(
+        SizedBox(
           width: double.infinity,
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               Container(
-                padding: EdgeInsets.symmetric(
+                padding: const EdgeInsets.symmetric(
                   vertical: 20,
-                  horizontal: 90,
+                  horizontal: 95,
                 ),
                 transform: Matrix4.rotationZ(-8 * pi / 180)..translate(-10.0),
                 decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(20),
                     color: Colors.white,
-                    boxShadow: [
+                    boxShadow: const [
                       BoxShadow(
                         blurRadius: 8,
                         color: Colors.black26,
@@ -52,7 +52,7 @@ class AuthPage extends StatelessWidget {
                       color: Colors.pinkAccent, fontWeight: FontWeight.bold),
                 ),
               ),
-              AuthForm(),
+              const AuthForm(),
             ],
           ),
         )
