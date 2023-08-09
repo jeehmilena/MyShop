@@ -63,4 +63,12 @@ class AuthModel with ChangeNotifier {
   Future<void> signInWithPassword(String email, String password) async {
     return _authenticate(email, password, 'signInWithPassword');
   }
+
+  void logout() {
+    _token = null;
+    _email = null;
+    _uid = null;
+    _expiryDate = null;
+    notifyListeners();
+  }
 }
