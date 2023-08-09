@@ -2,13 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:my_shop/models/auth_model.dart';
 import 'package:my_shop/models/cart_model.dart';
 import 'package:my_shop/models/order_list_model.dart';
-import 'package:my_shop/presenter/auth_page.dart';
 import 'package:my_shop/presenter/cart_overview.dart';
 import 'package:my_shop/presenter/form_product.dart';
+import 'package:my_shop/presenter/home_page.dart';
 import 'package:my_shop/presenter/manage_products.dart';
 import 'package:my_shop/presenter/orders_overview.dart';
 import 'package:my_shop/presenter/product_detail.dart';
-import 'package:my_shop/presenter/products_overview.dart';
 import 'package:my_shop/utils/app_routes.dart';
 import 'package:provider/provider.dart';
 
@@ -25,10 +24,15 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
-        ChangeNotifierProvider(create: (_) => ProductListModel()),
+        ChangeNotifierProvider(create: (_) => AuthModel()),
+        ChangeNotifierProxyProvider<AuthModel, ProductListModel>(
+          create: (_) => ProductListModel('', []),
+          update: (ctx, auth, previous) {
+            return ProductListModel(auth.getToken ?? '', previous?.items ?? []);
+          },
+        ),
         ChangeNotifierProvider(create: (_) => CartModel()),
         ChangeNotifierProvider(create: (_) => OrderListModel()),
-        ChangeNotifierProvider(create: (_) => AuthModel()),
       ],
       child: MaterialApp(
         theme: ThemeData(
@@ -38,8 +42,7 @@ class MyApp extends StatelessWidget {
                 ),
             fontFamily: 'Lato'),
         routes: {
-          AppRoutes.auth: (ctx) => const AuthPage(),
-          AppRoutes.home: (ctx) => const ProductsOverview(),
+          AppRoutes.home: (ctx) => const HomePage(),
           AppRoutes.productDetail: (ctx) => const ProductDetail(),
           AppRoutes.cart: (ctx) => const CartOverview(),
           AppRoutes.orders: (ctx) => const OrdersOverview(),
