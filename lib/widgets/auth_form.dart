@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:my_shop/exceptions/auth_exceptions.dart';
 import 'package:provider/provider.dart';
 
 import '../models/auth_model.dart';
@@ -33,19 +34,53 @@ class _AuthFormState extends State<AuthForm> {
     formKey.currentState?.save();
     AuthModel authModel = Provider.of(context, listen: false);
 
-    if (isLogin()) {
-      await authModel.signInWithPassword(
-        authData['email']!,
-        authData['password']!,
-      );
-    } else {
-      await authModel.signUp(
-        authData['email']!,
-        authData['password']!,
-      );
+    try {
+      if (isLogin()) {
+        await authModel.signInWithPassword(
+          authData['email']!,
+          authData['password']!,
+        );
+      } else {
+        await authModel.signUp(
+          authData['email']!,
+          authData['password']!,
+        );
+      }
+    } on AuthException catch (error) {
+      showErrorDialog(error.toString());
+    } catch (error) {
+      showErrorDialog('an unexpected error occurred');
     }
 
     setState(() => isLoading = false);
+  }
+
+  void showErrorDialog(String message) {
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: Text(
+          'Ops!',
+          style: Theme.of(context).textTheme.titleLarge,
+        ),
+        content: Text(
+          message,
+          style: Theme.of(context).textTheme.bodyMedium,
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: Text(
+              'Close',
+              style: Theme.of(context)
+                  .textTheme
+                  .titleMedium
+                  ?.copyWith(color: Colors.pinkAccent),
+            ),
+          ),
+        ],
+      ),
+    );
   }
 
   void switchAuthMode() {
