@@ -33,7 +33,7 @@ class AuthPage extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.symmetric(
                   vertical: 20,
-                  horizontal: 95,
+                  horizontal: 100,
                 ),
                 transform: Matrix4.rotationZ(-8 * pi / 180)..translate(-10.0),
                 decoration: BoxDecoration(

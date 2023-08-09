@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+
+import '../models/auth_model.dart';
 
 enum AuthMode { Signup, Login }
 
@@ -11,26 +14,53 @@ class AuthForm extends StatefulWidget {
 
 class _AuthFormState extends State<AuthForm> {
   AuthMode _authMode = AuthMode.Login;
+  final passwordController = TextEditingController();
+  final Map<String, String> authData = {'email': '', 'password': ''};
+  final formKey = GlobalKey<FormState>();
+  bool isLoading = false;
+
+  bool isLogin() => _authMode == AuthMode.Login;
+  bool isSignup() => _authMode == AuthMode.Signup;
+
+  Future<void> submit() async {
+    final isValid = formKey.currentState?.validate() ?? false;
+
+    if (!isValid) {
+      return;
+    }
+
+    setState(() => isLoading = true);
+    formKey.currentState?.save();
+    AuthModel authModel = Provider.of(context, listen: false);
+
+    if (isLogin()) {
+      await authModel.signInWithPassword(
+        authData['email']!,
+        authData['password']!,
+      );
+    } else {
+      await authModel.signUp(
+        authData['email']!,
+        authData['password']!,
+      );
+    }
+
+    setState(() => isLoading = false);
+  }
+
+  void switchAuthMode() {
+    setState(() {
+      if (isLogin()) {
+        _authMode = AuthMode.Signup;
+      } else {
+        _authMode = AuthMode.Login;
+      }
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
-    final passwordController = TextEditingController();
     final deviceSize = MediaQuery.of(context).size;
-    final Map<String, String> authData = {'email': '', 'password': ''};
-
-    bool isLogin() => _authMode == AuthMode.Login;
-    bool isSignup() => _authMode == AuthMode.Signup;
-
-    void submit() {}
-    void switchAuthMode() {
-      setState(() {
-        if (isLogin()) {
-          _authMode = AuthMode.Signup;
-        } else {
-          _authMode = AuthMode.Login;
-        }
-      });
-    }
 
     return Card(
       elevation: 8,
@@ -40,6 +70,7 @@ class _AuthFormState extends State<AuthForm> {
         height: isLogin() ? 320 : 400,
         width: deviceSize.width * 0.75,
         child: Form(
+          key: formKey,
           child: Column(
             children: [
               TextFormField(
@@ -90,18 +121,21 @@ class _AuthFormState extends State<AuthForm> {
                         },
                 ),
               const SizedBox(height: 20),
-              ElevatedButton(
-                onPressed: submit,
-                style: ElevatedButton.styleFrom(
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(30),
-                    ),
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 50,
-                      vertical: 10,
-                    )),
-                child: Text(isLogin() ? 'ENTER' : 'REGISTER'),
-              ),
+              if (isLoading)
+                const CircularProgressIndicator()
+              else
+                ElevatedButton(
+                  onPressed: submit,
+                  style: ElevatedButton.styleFrom(
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(30),
+                      ),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 50,
+                        vertical: 10,
+                      )),
+                  child: Text(isLogin() ? 'ENTER' : 'REGISTER'),
+                ),
               const Spacer(),
               TextButton(
                 onPressed: switchAuthMode,
