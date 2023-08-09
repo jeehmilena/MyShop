@@ -9,7 +9,10 @@ import 'package:my_shop/utils/constants.dart';
 import 'order_model.dart';
 
 class OrderListModel with ChangeNotifier {
-  final List<OrderModel> _items = [];
+  final String _token;
+  List<OrderModel> _items = [];
+
+  OrderListModel([this._token = '', this._items = const []]);
 
   List<OrderModel> get items {
     return [..._items];
@@ -20,15 +23,15 @@ class OrderListModel with ChangeNotifier {
   }
 
   Future<void> loadOrders() async {
-    _items.clear();
+    List<OrderModel> items = [];
 
-    final response =
-        await http.get(Uri.parse('${Constants.ordersBaseUrl}.json'));
+    final response = await http
+        .get(Uri.parse('${Constants.ordersBaseUrl}.json?auth=$_token'));
     if (response.body == 'null') return;
 
     Map<String, dynamic> data = jsonDecode(response.body);
     data.forEach((orderId, orderData) {
-      _items.add(OrderModel(
+      items.add(OrderModel(
         id: orderId,
         total: orderData['total'],
         date: DateTime.parse(orderData['date']),
@@ -43,27 +46,29 @@ class OrderListModel with ChangeNotifier {
         }).toList(),
       ));
     });
+
+    _items = items.reversed.toList();
     notifyListeners();
   }
 
   Future<void> addOrder(CartModel cart) async {
     final date = DateTime.now();
 
-    final response =
-        await http.post(Uri.parse('${Constants.ordersBaseUrl}.json'),
-            body: jsonEncode({
-              "total": cart.totalAmountCart,
-              "date": date.toIso8601String(),
-              "products": cart.items.values
-                  .map((cardItem) => {
-                        "id": cardItem.id,
-                        "productId": cardItem.productId,
-                        "name": cardItem.title,
-                        "quantity": cardItem.quantity,
-                        "price": cardItem.price
-                      })
-                  .toList(),
-            }));
+    final response = await http.post(
+        Uri.parse('${Constants.ordersBaseUrl}.json?auth=$_token'),
+        body: jsonEncode({
+          "total": cart.totalAmountCart,
+          "date": date.toIso8601String(),
+          "products": cart.items.values
+              .map((cardItem) => {
+                    "id": cardItem.id,
+                    "productId": cardItem.productId,
+                    "name": cardItem.title,
+                    "quantity": cardItem.quantity,
+                    "price": cardItem.price
+                  })
+              .toList(),
+        }));
 
     final id = jsonDecode(response.body)['name'];
 
