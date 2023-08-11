@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter/cupertino.dart';
@@ -5,11 +6,14 @@ import 'package:http/http.dart' as http;
 import 'package:my_shop/exceptions/auth_exceptions.dart';
 import 'package:my_shop/utils/constants.dart';
 
+import '../datasource/store.dart';
+
 class AuthModel with ChangeNotifier {
   String? _token;
   String? _email;
   String? _uid;
   DateTime? _expiryDate;
+  Timer? _logoutTimer;
 
   bool get isAuth {
     final isValid = _expiryDate?.isAfter(DateTime.now()) ?? false;
@@ -51,7 +55,17 @@ class AuthModel with ChangeNotifier {
       _uid = body['localId'];
       _expiryDate =
           DateTime.now().add(Duration(seconds: int.parse(body['expiresIn'])));
+      Store.saveMap(
+        'userData',
+        {
+          'token': _token,
+          'email': _email,
+          'uid': _uid,
+          'expiryDate': _expiryDate!.toIso8601String(),
+        },
+      );
 
+      _autoLogout();
       notifyListeners();
     }
   }
@@ -64,11 +78,43 @@ class AuthModel with ChangeNotifier {
     return _authenticate(email, password, 'signInWithPassword');
   }
 
+  Future<void> tryAutoLogin() async {
+    if (isAuth) return;
+
+    final userData = await Store.getMap('userData');
+    if (userData.isEmpty) return;
+
+    final expiryDate = DateTime.parse(userData['expiryDate']);
+    if (expiryDate.isBefore(DateTime.now())) return;
+
+    _token = userData['idToken'];
+    _email = userData['email'];
+    _uid = userData['localId'];
+    _expiryDate = expiryDate;
+
+    _autoLogout();
+    notifyListeners();
+  }
+
   void logout() {
     _token = null;
     _email = null;
     _uid = null;
     _expiryDate = null;
-    notifyListeners();
+    _clearAutoLogoutTimer();
+    Store.remove('userData').then((_) {
+      notifyListeners();
+    });
+  }
+
+  void _clearAutoLogoutTimer() {
+    _logoutTimer?.cancel();
+    _logoutTimer = null;
+  }
+
+  void _autoLogout() {
+    _clearAutoLogoutTimer();
+    final timeToLogout = _expiryDate?.difference(DateTime.now()).inSeconds;
+    _logoutTimer = Timer(Duration(seconds: timeToLogout ?? 0), logout);
   }
 }
