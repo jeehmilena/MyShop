@@ -21,7 +21,8 @@ class _AuthFormState extends State<AuthForm>
   final formKey = GlobalKey<FormState>();
   bool isLoading = false;
   AnimationController? animationController;
-  Animation<Size>? heightAnimation;
+  Animation<double>? opacityAnimation;
+  Animation<Offset>? slideAnimation;
 
   @override
   void initState() {
@@ -33,9 +34,19 @@ class _AuthFormState extends State<AuthForm>
       ),
     );
 
-    heightAnimation = Tween(
-      begin: const Size(double.infinity, 310),
-      end: const Size(double.infinity, 400),
+    opacityAnimation = Tween(
+      begin: 0.0,
+      end: 1.0,
+    ).animate(
+      CurvedAnimation(
+        parent: animationController!,
+        curve: Curves.linear,
+      ),
+    );
+
+    slideAnimation = Tween<Offset>(
+      begin: const Offset(0, -1.5),
+      end: const Offset(0, 0),
     ).animate(
       CurvedAnimation(
         parent: animationController!,
@@ -53,7 +64,7 @@ class _AuthFormState extends State<AuthForm>
   }
 
   bool isLogin() => _authMode == AuthMode.Login;
-  bool isSignup() => _authMode == AuthMode.Signup;
+  //bool isSignup() => _authMode == AuthMode.Signup;
 
   Future<void> submit() async {
     final isValid = formKey.currentState?.validate() ?? false;
@@ -175,23 +186,36 @@ class _AuthFormState extends State<AuthForm>
                   return null;
                 },
               ),
-              if (isSignup())
-                TextFormField(
-                  decoration: const InputDecoration(
-                    labelText: 'Confirm Password',
-                  ),
-                  keyboardType: TextInputType.text,
-                  obscureText: true,
-                  validator: isLogin()
-                      ? null
-                      : (_password) {
-                          final password = _password ?? '';
-                          if (password != passwordController.text) {
-                            return 'The passwords entered are different.';
-                          }
-                          return null;
-                        },
+              AnimatedContainer(
+                constraints: BoxConstraints(
+                  minHeight: isLogin() ? 0 : 60,
+                  maxHeight: isLogin() ? 0 : 120,
                 ),
+                duration: const Duration(milliseconds: 300),
+                curve: Curves.linear,
+                child: FadeTransition(
+                  opacity: opacityAnimation!,
+                  child: SlideTransition(
+                    position: slideAnimation!,
+                    child: TextFormField(
+                      decoration: const InputDecoration(
+                        labelText: 'Confirm Password',
+                      ),
+                      keyboardType: TextInputType.text,
+                      obscureText: true,
+                      validator: isLogin()
+                          ? null
+                          : (_password) {
+                              final password = _password ?? '';
+                              if (password != passwordController.text) {
+                                return 'The passwords entered are different.';
+                              }
+                              return null;
+                            },
+                    ),
+                  ),
+                ),
+              ),
               const SizedBox(height: 20),
               if (isLoading)
                 const CircularProgressIndicator()

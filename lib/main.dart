@@ -9,6 +9,7 @@ import 'package:my_shop/presenter/manage_products.dart';
 import 'package:my_shop/presenter/orders_overview.dart';
 import 'package:my_shop/presenter/product_detail.dart';
 import 'package:my_shop/utils/app_routes.dart';
+import 'package:my_shop/utils/custom_route.dart';
 import 'package:provider/provider.dart';
 
 import 'models/product_list_model.dart';
@@ -48,11 +49,16 @@ class MyApp extends StatelessWidget {
       ],
       child: MaterialApp(
         theme: ThemeData(
-            colorScheme: Theme.of(context).colorScheme.copyWith(
-                  primary: Colors.green,
-                  secondary: Colors.lightGreenAccent,
-                ),
-            fontFamily: 'Lato'),
+          colorScheme: Theme.of(context).colorScheme.copyWith(
+                primary: Colors.green,
+                secondary: Colors.lightGreenAccent,
+              ),
+          fontFamily: 'Lato',
+          pageTransitionsTheme: PageTransitionsTheme(builders: {
+            TargetPlatform.iOS: CustomPageTransitionsBuilder(),
+            TargetPlatform.android: CustomPageTransitionsBuilder(),
+          }),
+        ),
         routes: {
           AppRoutes.home: (ctx) => const HomePage(),
           AppRoutes.productDetail: (ctx) => const ProductDetail(),

@@ -29,6 +29,9 @@ class AppDrawer extends StatelessWidget {
             title: const Text('Orders'),
             onTap: () {
               Navigator.of(context).pushReplacementNamed(AppRoutes.orders);
+              // Navigator.of(context).pushReplacement(
+              //   CustomRout(builder: (ctx) => OrdersOverview()),
+              // );
             },
           ),
           const Divider(),

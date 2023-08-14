@@ -24,36 +24,42 @@ class AuthPage extends StatelessWidget {
             ),
           ),
         ),
-        SizedBox(
-          width: double.infinity,
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              Container(
-                padding: const EdgeInsets.symmetric(
-                  vertical: 20,
-                  horizontal: 100,
-                ),
-                transform: Matrix4.rotationZ(-8 * pi / 180)..translate(-10.0),
-                decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(20),
-                    color: Colors.white,
-                    boxShadow: const [
-                      BoxShadow(
-                        blurRadius: 8,
-                        color: Colors.black26,
-                        offset: Offset(0, 2),
-                      )
-                    ]),
-                child: Text(
-                  'MY SHOP',
-                  style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                      color: Colors.pinkAccent, fontWeight: FontWeight.bold),
-                ),
+        Center(
+          child: SingleChildScrollView(
+            child: SizedBox(
+              width: double.infinity,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                      vertical: 20,
+                      horizontal: 100,
+                    ),
+                    transform: Matrix4.rotationZ(-8 * pi / 180)
+                      ..translate(-10.0),
+                    decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(20),
+                        color: Colors.white,
+                        boxShadow: const [
+                          BoxShadow(
+                            blurRadius: 8,
+                            color: Colors.black26,
+                            offset: Offset(0, 2),
+                          )
+                        ]),
+                    child: Text(
+                      'MY SHOP',
+                      style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                          color: Colors.pinkAccent,
+                          fontWeight: FontWeight.bold),
+                    ),
+                  ),
+                  const AuthForm(),
+                ],
               ),
-              const AuthForm(),
-            ],
+            ),
           ),
         )
       ],
