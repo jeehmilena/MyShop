@@ -34,8 +34,8 @@ class _AuthFormState extends State<AuthForm>
     );
 
     heightAnimation = Tween(
-      begin: Size(double.infinity, 310),
-      end: Size(double.infinity, 400),
+      begin: const Size(double.infinity, 310),
+      end: const Size(double.infinity, 400),
     ).animate(
       CurvedAnimation(
         parent: animationController!,
@@ -43,7 +43,7 @@ class _AuthFormState extends State<AuthForm>
       ),
     );
 
-    heightAnimation?.addListener(() => setState(() {}));
+    //heightAnimation?.addListener(() => setState(() {}));
   }
 
   @override
@@ -134,10 +134,14 @@ class _AuthFormState extends State<AuthForm>
     return Card(
       elevation: 8,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-      child: Container(
-        padding: const EdgeInsets.all(16),
-        height: heightAnimation?.value.height ?? (isLogin() ? 320 : 400),
-        width: deviceSize.width * 0.75,
+      child: AnimatedBuilder(
+        animation: heightAnimation!,
+        builder: (ctx, childForm) => Container(
+          padding: const EdgeInsets.all(16),
+          height: heightAnimation?.value.height ?? (isLogin() ? 320 : 400),
+          width: deviceSize.width * 0.75,
+          child: childForm,
+        ),
         child: Form(
           key: formKey,
           child: Column(
