@@ -134,14 +134,13 @@ class _AuthFormState extends State<AuthForm>
     return Card(
       elevation: 8,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-      child: AnimatedBuilder(
-        animation: heightAnimation!,
-        builder: (ctx, childForm) => Container(
-          padding: const EdgeInsets.all(16),
-          height: heightAnimation?.value.height ?? (isLogin() ? 320 : 400),
-          width: deviceSize.width * 0.75,
-          child: childForm,
-        ),
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 300),
+        curve: Curves.easeIn,
+        padding: const EdgeInsets.all(16),
+        height: isLogin() ? 310 : 400,
+        // height: heightAnimation?.value.height ?? (isLogin() ? 320 : 400),
+        width: deviceSize.width * 0.75,
         child: Form(
           key: formKey,
           child: Column(
